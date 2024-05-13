@@ -1,1 +1,4 @@
 .idea
+deploy/data
+deploy/save_video
+deploy/logs.log
