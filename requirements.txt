@@ -1,0 +1,8 @@
+numpy==1.21.6
+opencv-python==4.8.1.78
+pillow==9.5.0
+torch==1.13.1
+matplotlib==3.5.3
+torchvision==0.14.1
+onnxruntime==1.14.1
+coloredlogs==15.0.1
