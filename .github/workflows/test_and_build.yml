@@ -1,10 +1,5 @@
 name: build and packet
-on:
-  push:
-    branches:
-      - release
-      - develop
-      - master
+on: [push]
 permissions: write-all
 
 jobs:
