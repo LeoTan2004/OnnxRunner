@@ -33,6 +33,6 @@ class YoloDetector(Detector):
         # 转变成Image
         frame = Image.fromarray(np.uint8(frame))
         # 进行检测
-        res = self.model.detect_image(frame)
+        res, cost_time = self.model.detect_image(frame)
         self.logger.info(f"detect success: {res}")
         return res

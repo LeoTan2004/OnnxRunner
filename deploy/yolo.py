@@ -1,4 +1,5 @@
 import colorsys
+import time
 
 import cv2
 import numpy as np
@@ -194,8 +195,9 @@ class YOLO_ONNX_DETECT(object):
         image_data = np.expand_dims(np.transpose(preprocess_input(np.array(image_data, dtype='float32')), (2, 0, 1)), 0)
 
         input_feed = self.get_input_feed(image_data)
+        s = time.time()
         outputs = self.onnx_session.run(output_names=self.output_name, input_feed=input_feed)
-
+        cost_time = time.time() - s
         feature_map_shape = [[int(j / (2 ** (i + 3))) for j in self.input_shape] for i in
                              range(len(self.anchors_mask))][::-1]
         for i in range(len(self.anchors_mask)):
@@ -213,7 +215,7 @@ class YOLO_ONNX_DETECT(object):
                                                      nms_thres=self.nms_iou)
         # 这里结束代码翻译
         if results[0] is None:
-            return None
+            return None, cost_time
 
         top_label = np.array(results[0][:, 6], dtype='int32')
         top_conf = results[0][:, 4] * results[0][:, 5]
@@ -233,7 +235,7 @@ class YOLO_ONNX_DETECT(object):
             box = {'top': top, 'left': left,
                    'bottom': bottom, 'right': right}
             res.append(DetectResult(predicted_class, score, box))
-        return res
+        return res, cost_time
 
 
 class DetectResult:
