@@ -46,7 +46,7 @@ jobs:
       - name: Package the ${{ matrix.target }}
         working-directory: ${{ matrix.run-dir }}
         run: |
-          pyinstaller ${{ matrix.target }} –clean -add-data=:model_data
+          pyinstaller ${{ matrix.target }} –-clean --add-data=:model_data
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
