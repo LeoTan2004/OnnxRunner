@@ -1,12 +1,34 @@
 name: build and packet
+
 on: [push]
 permissions: write-all
 
 jobs:
-  armv7_job:
+  verify:
+    name: Verify The Code
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Set Up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the Requiremens
+        run: |
+          pip install -r requirements.txt
+      - name: Test The Target
+        run: |
+          sh ./test.sh
+  build:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
     runs-on: ubuntu-22.04
-
     strategy:
       matrix:
         include:
@@ -22,33 +44,26 @@ jobs:
           lfs: true
       - name: Run On ${{ matrix.distro }} ${{ matrix.arch }}
         uses: uraimo/run-on-arch-action@v2
-        id: runcmd
         with:
+          githubToken: ${{ github.token }}
           arch: ${{ matrix.arch }}
           distro: ${{ matrix.distro }}
+          setup: |
+            mkdir -p "${PWD}/artifacts"
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          install: |
+            apt-get update -q -y
+            apt-get install -q -y git
+            apt-get install -q -y python${{ matrix.python }}
+            pip install -r requirements.txt pyinstaller
+          shell: /bin/sh
           run: |
-            uname -a
-            echo ::set-output name=uname::$(uname -a)
-      - name: Setup Python
-        uses: actions/setup-python@v2
+            sh ./build.sh
+            cp "./dist" "/artifacts/${{matrix.target}}"
+            ls -al "/artifacts/${{matrix.target}}"
+      - name: Zip the Artifact
+        uses: actions/upload-artifact@v4
         with:
-          python-version: ${{ matrix.python }}
-      - name: Install Requirements
-        run: |
-          pip install -r requirements.txt
-      - name: Test ${{ matrix.target }}
-        working-directory: ${{ matrix.run-dir }}
-        run: |
-          python ${{ matrix.target }}
-      - name: Install PyInstaller
-        run: |
-          pip install pyinstaller
-      - name: Package the ${{ matrix.target }}
-        working-directory: ${{ matrix.run-dir }}
-        run: |
-          pyinstaller ${{ matrix.target }} –-clean --add-data=:model_data
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          path: ${{ matrix.run-dir }}/dist/*
-      
+          name: Drone-${{ matrix.distro }}-${{ matrix.arch }}
+          path: "${PWD}/artifacts"
