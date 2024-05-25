@@ -19,8 +19,8 @@ jobs:
         uses: uraimo/run-on-arch-action@v1.0.8
         id: runcmd
         with:
-          architecture: ${{ matrix.arch }}
-          distribution: ${{ matrix.distro }}
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
           run: |
             uname -a
             echo ::set-output name=uname::$(uname -a)
