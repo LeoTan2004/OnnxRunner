@@ -12,6 +12,9 @@ jobs:
         include:
           - arch: armv7
             distro: ubuntu22.04
+            python: 3.7
+            run-dir: deploy
+            target: onnx_profile.py
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -21,9 +24,26 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
           distro: ${{ matrix.distro }}
-          run: |
-            uname -a
-            echo ::set-output name=uname::$(uname -a)
-      - name: Get the output
+      - name: Setup Python
+        uses: actions/setup-python
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install Requirements
         run: |
-          echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
+          pip install -r requirements.txt
+      - name: Test ${{ matrix.target }}
+        working-directory: ${{ matrix.run-dir }}
+        run: |
+          python ${{ matrix.target }}
+      - name: Install PyInstaller
+        run: |
+          pip install pyinstaller
+      - name: Package the ${{ matrix.target }}
+        working-directory: ${{ matrix.run-dir }}
+        run: |
+          pyinstaller ${{ matrix.target }} –clean -add-data=:model_data
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ matrix.run-dir }}/dist/*
+      
