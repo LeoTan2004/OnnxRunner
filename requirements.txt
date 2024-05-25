@@ -2,8 +2,8 @@
 numpy
 opencv-python
 pillow
-torch+cpu
+torch
 matplotlib
-torchvision+cpu
+torchvision
 onnxruntime
 coloredlogs
