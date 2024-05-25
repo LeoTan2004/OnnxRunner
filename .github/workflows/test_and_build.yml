@@ -43,7 +43,7 @@ jobs:
         with:
           lfs: true
       - name: Run On ${{ matrix.distro }} ${{ matrix.arch }}
-        uses: uraimo/run-on-arch-action@v2
+        uses: uraimo/run-on-arch-action@v2.6.0
         with:
           githubToken: ${{ github.token }}
           arch: ${{ matrix.arch }}
@@ -52,6 +52,7 @@ jobs:
             mkdir -p "${PWD}/artifacts"
           dockerRunArgs: |
             --volume "${PWD}/artifacts:/artifacts"
+            --volume "${PWD}:/app"
           install: |
             set -x
             if command -v apt-get &> /dev/null; then
@@ -63,9 +64,10 @@ jobs:
               apk update
               apk add python3 py3-pip
             fi
-            pip install -r requirements.txt pyinstaller
+            pip install -r /app/requirements.txt pyinstaller
           shell: /bin/sh
           run: |
+            cd /app
             sh ./build.sh
             cp "./dist" "/artifacts/${{matrix.target}}"
             ls -al "/artifacts/${{matrix.target}}"
