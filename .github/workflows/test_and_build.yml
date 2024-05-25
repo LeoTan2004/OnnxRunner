@@ -24,6 +24,9 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
           distro: ${{ matrix.distro }}
+          run: |
+            uname -a
+            echo ::set-output name=uname::$(uname -a)
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
