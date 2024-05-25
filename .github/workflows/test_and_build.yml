@@ -5,18 +5,18 @@ permissions: write-all
 jobs:
   armv7_job:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
-    runs-on: ubuntu-18.04
+    runs-on: ${{ matrix.distro }}
 
     strategy:
       matrix:
         include:
           - arch: armv7
-            distro: ubuntu18.04
+            distro: ubuntu22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run On ${{ matrix.distro }} ${{ matrix.arch }}
-        uses: uraimo/run-on-arch-action@v1.0.8
+        uses: uraimo/run-on-arch-action@v2
         id: runcmd
         with:
           arch: ${{ matrix.arch }}
