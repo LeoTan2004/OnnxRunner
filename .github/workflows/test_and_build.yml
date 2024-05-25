@@ -67,6 +67,8 @@ jobs:
           shell: /bin/sh
           run: |
             cd /app
+            python -m pip install --upgrade pip
+            pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
             pip install -r requirements.txt pyinstaller
             sh ./build.sh
             cp "./dist" "/artifacts/${{matrix.target}}"
