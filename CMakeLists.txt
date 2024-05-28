@@ -1,23 +1,16 @@
 cmake_minimum_required(VERSION 3.28)
-project(Drone)
+project(Drone
+        VERSION 0.1
+        LANGUAGES C CXX
+)
 
 set(CMAKE_CXX_STANDARD 17)
-
 find_package(OpenCV REQUIRED)
+add_subdirectory(src)
 
-if(DEFINED OPENVX_INCLUDES)
-    message(STATUS "OPENVX_INCLUDES: \t${OPENVX_INCLUDES}")
-    include_directories(${OPENVX_INCLUDES})
-else()
-    message(STATUS "OPENVX_INCLUDES: \t<empty>")
-endif()
-
-if(DEFINED OPENVX_LIBRARIES)
-    message(STATUS "OPENVX_LIBRARIES: \t${OPENVX_LIBRARIES}")
-else()
-    message(STATUS "OPENVX_LIBRARIES: \t<empty>")
-endif()
-
-add_executable(Drone src/main.cpp)
-
-target_link_libraries(${PROJECT_NAME} ${OPENVX_LIBRARIES} ${OpenCV_LIBRARIES})
+option(BUILD_TEST "Whether or not to build the tests" OFF)
+if (${BUILD_TEST})
+    message(STATUS "Building tests")
+    enable_testing()
+    add_subdirectory(tests)
+endif ()

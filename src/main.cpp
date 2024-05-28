@@ -4,14 +4,12 @@
 using namespace cv;
 using namespace std;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     // 读取图像
-    Mat image = imread("../resource/test-set/img/0005.jpg", IMREAD_COLOR);
+    Mat image = imread("../res/test-set/img/0005.jpg", IMREAD_COLOR);
 
     // 判断是否读取成功
-    if (image.empty())
-    {
+    if (image.empty()) {
         cout << "Could not open or find the image" << endl;
         return -1;
     }
