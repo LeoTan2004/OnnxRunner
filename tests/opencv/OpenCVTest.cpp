@@ -9,7 +9,7 @@ using namespace cv;
 using namespace std;
 
 TEST_CASE("MainTest", "[test,label]") {
-    Mat image = imread("/home/leo/Project/Project/Python/drone/tests/res/img/0005.jpg", IMREAD_COLOR);
+    Mat image = imread("../../../tests/res/img/0005.jpg", IMREAD_COLOR);
     REQUIRE_FALSE(image.empty());
 
 }
